@@ -30,6 +30,7 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Score")
 	void ModifyScore(int32 ScoreAmount);
 
+	/** 초 단위 */
 	FOnTimeChanged OnTimeChangedDelegate;
 
 	UFUNCTION(BlueprintCallable, Category = "Time")

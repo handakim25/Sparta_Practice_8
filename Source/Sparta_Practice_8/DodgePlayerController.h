@@ -52,4 +52,12 @@ private:
 	// 마우스 우클릭을 하고 있는 시간
 	UPROPERTY(VisibleInstanceOnly, Category = "Input")
 	float FollowTime;
+
+protected:
+	virtual void InitUI();
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (AllowPrivateAccess = "true"))
+	TSubclassOf<class UHudWidget> HudWidgetClass;
+	UPROPERTY()
+	TObjectPtr<class UHudWidget> HudWidget;
 };

@@ -5,7 +5,9 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "HudWidget.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Blueprint/UserWidget.h"
 
 ADodgePlayerController::ADodgePlayerController()
 {
@@ -21,7 +23,7 @@ void ADodgePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	InitUI();
 }
 
 void ADodgePlayerController::SetupInputComponent()
@@ -84,4 +86,16 @@ void ADodgePlayerController::OnClickCompleted()
 void ADodgePlayerController::OnClickCanceled()
 {
 	UE_LOG(LogTemp, Display, TEXT("OnClickCanceled"));
+}
+
+void ADodgePlayerController::InitUI()
+{
+	if (HudWidgetClass)
+	{
+		HudWidget = CreateWidget<UHudWidget>(this, HudWidgetClass);
+		if (HudWidget)
+		{
+			HudWidget->AddToViewport();
+		}
+	}
 }
