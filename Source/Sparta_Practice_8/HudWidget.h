@@ -18,9 +18,14 @@ public:
 	virtual void NativeConstruct() override;
 	UFUNCTION()
 	void UpdateTimerDisplay(float Time);
+	UFUNCTION()
+	void UpdateScoreDisplay(int32 ScoreAmount);
 	
 protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> TimerText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UTextBlock> ScoreText;
 };

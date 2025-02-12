@@ -14,6 +14,9 @@ void UHudWidget::NativeConstruct()
 	{
 		UpdateTimerDisplay(GameState->GetRemainTime());
 		GameState->OnTimeChangedDelegate.AddDynamic(this, &UHudWidget::UpdateTimerDisplay);
+
+		UpdateScoreDisplay(GameState->GetScore());
+		GameState->OnScoreChangedDelegate.AddDynamic(this, &UHudWidget::UpdateScoreDisplay);
 	}
 }
 
@@ -26,5 +29,13 @@ void UHudWidget::UpdateTimerDisplay(float Time)
 
 	const FString TimeString = FString::Printf(TEXT("%02d:%02d"), MinutesRemain, SecondsRemain);
 	TimerText->SetText(FText::FromString(TimeString));
+}
+
+void UHudWidget::UpdateScoreDisplay(int32 ScoreAmount)
+{
+	if (!ScoreText) return;
+
+	const FString ScoreString = FString::Printf(TEXT("%d"), ScoreAmount);
+	ScoreText->SetText(FText::FromString(ScoreString));
 }
 
