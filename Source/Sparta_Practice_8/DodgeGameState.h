@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class SPARTA_PRACTICE_8_API ADodgeGameState : public AGameState
+class SPARTA_PRACTICE_8_API ADodgeGameState : public AGameStateBase
 {
 	GENERATED_BODY()
 	
