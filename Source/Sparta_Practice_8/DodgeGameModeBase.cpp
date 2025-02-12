@@ -27,4 +27,70 @@ ADodgeGameModeBase::ADodgeGameModeBase()
 	{
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
+
+	LevelDuration = 5.f;
+	TimerUpdateInterval = 0.1f;
+}
+
+void ADodgeGameModeBase::EndLevel(bool bIsGameWin)
+{
+	UE_LOG(LogTemp, Display, TEXT("DodgeGameModeBase::EndLevel"));
+	// Pause Game
+	// Show UI
+	// Move to next level
+}
+
+void ADodgeGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	UE_LOG(LogTemp, Display, TEXT("Init Game"));
+}
+
+void ADodgeGameModeBase::InitGameState()
+{
+	Super::InitGameState();
+
+	UE_LOG(LogTemp, Display, TEXT("Init GameState"));
+}
+
+void ADodgeGameModeBase::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GetWorldTimerManager().SetTimer(
+		LevelTimerHandle,
+		this,
+		&ADodgeGameModeBase::OnLevelTimerUp,
+		LevelDuration,
+		false
+	);
+
+	TimerUpdateInterval = FMath::Max(TimerUpdateInterval, 0.1f);
+	GetWorldTimerManager().SetTimer(
+		UpdateTimerHandle,
+		this,
+		&ADodgeGameModeBase::OnUpdateTimer,
+		TimerUpdateInterval,
+		true
+	);
+}
+
+void ADodgeGameModeBase::OnLevelTimerUp()
+{
+	EndLevel(false);
+}
+
+void ADodgeGameModeBase::OnUpdateTimer()
+{
+	if (ADodgeGameState* DodgeGameState = GetGameState<ADodgeGameState>())
+	{
+		DodgeGameState->UpdateTime(GetRemainTime());
+	}
+}
+
+float ADodgeGameModeBase::GetRemainTime() const
+{
+	return GetWorldTimerManager().IsTimerActive(LevelTimerHandle) ?
+		GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle) : 0.0f;
 }

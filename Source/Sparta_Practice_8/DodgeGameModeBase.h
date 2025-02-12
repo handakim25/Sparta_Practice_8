@@ -14,5 +14,26 @@ class SPARTA_PRACTICE_8_API ADodgeGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
 public:
-		ADodgeGameModeBase();
+	ADodgeGameModeBase();
+
+	void EndLevel(bool bIsGameWin);
+	
+protected:
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+	virtual void InitGameState() override;
+	virtual void BeginPlay() override;
+
+	virtual void OnLevelTimerUp();
+	void OnUpdateTimer();
+
+	/** 남은 시간을 반환한다.*/
+	UFUNCTION(BlueprintPure)
+	float GetRemainTime() const;
+private:
+	FTimerHandle LevelTimerHandle;
+	FTimerHandle UpdateTimerHandle;
+	
+	UPROPERTY(EditAnywhere)
+	float LevelDuration;
+	float TimerUpdateInterval;
 };
