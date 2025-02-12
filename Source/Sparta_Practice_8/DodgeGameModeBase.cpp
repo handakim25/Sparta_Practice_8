@@ -34,6 +34,9 @@ ADodgeGameModeBase::ADodgeGameModeBase()
 
 void ADodgeGameModeBase::EndLevel(bool bIsGameWin)
 {
+	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
+	GetWorldTimerManager().ClearTimer(UpdateTimerHandle);
+	
 	UE_LOG(LogTemp, Display, TEXT("DodgeGameModeBase::EndLevel"));
 	// Pause Game
 	// Show UI
