@@ -16,7 +16,9 @@ class SPARTA_PRACTICE_8_API ADodgeGameModeBase : public AGameModeBase
 public:
 	ADodgeGameModeBase();
 
+	UFUNCTION(BlueprintCallable)
 	void EndLevel(bool bIsGameWin);
+	UFUNCTION(BlueprintCallable)
 	void ModifyScore(int PointAmount);
 	
 protected:

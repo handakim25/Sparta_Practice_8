@@ -16,6 +16,7 @@ ASpawnVolume::ASpawnVolume()
 
 	SpawningBox = CreateDefaultSubobject<UBoxComponent>("SpawningBox");
 	SpawningBox->SetupAttachment(SceneRoot);
+	SpawningBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	SpawnHeightOffset = 64.f;
 }
