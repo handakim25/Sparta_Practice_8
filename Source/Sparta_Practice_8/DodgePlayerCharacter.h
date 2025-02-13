@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraCommon.h"
 #include "GameFramework/Character.h"
 #include "DodgePlayerCharacter.generated.h"
 
@@ -21,6 +22,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int MaxLife;
+	int Life;
+	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UCameraComponent> TopDownCamera;
@@ -29,3 +37,10 @@ private:
 	TObjectPtr<class USpringArmComponent> SpringArm;
 	
 };
+
+inline void ADodgePlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Life = MaxLife;
+}

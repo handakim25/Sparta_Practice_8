@@ -38,6 +38,8 @@ ADodgePlayerCharacter::ADodgePlayerCharacter()
 	TopDownCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	TopDownCamera->bUsePawnControlRotation = false;
 
+	MaxLife = 5;
+	
 	Tags.Add(FName("Player"));
 }
 

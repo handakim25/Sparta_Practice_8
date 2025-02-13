@@ -35,7 +35,7 @@ void UHudWidget::UpdateScoreDisplay(int32 ScoreAmount)
 {
 	if (!ScoreText) return;
 
-	const FString ScoreString = FString::Printf(TEXT("%d"), ScoreAmount);
+	const FString ScoreString = FString::Printf(TEXT("Score: %d"), ScoreAmount);
 	ScoreText->SetText(FText::FromString(ScoreString));
 }
 

@@ -22,6 +22,13 @@ void ADodgeGameState::ModifyScore(int32 ScoreAmount)
 	OnScoreChangedDelegate.Broadcast(Score);
 }
 
+void ADodgeGameState::SetScore(int32 NewScore)
+{
+	Score = NewScore >= 0 ? NewScore : 0;
+
+	OnScoreChangedDelegate.Broadcast(Score);
+}
+
 void ADodgeGameState::UpdateTime(float NewRemainTime)
 {
 	RemainTime = NewRemainTime >= 0.f ? NewRemainTime : 0.f;

@@ -15,15 +15,24 @@ class SPARTA_PRACTICE_8_API ADodgeGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	ADodgeGameModeBase();
-
+	
 	UFUNCTION(BlueprintCallable)
-	void EndLevel(bool bIsGameWin);
+	void NextLevel();
+	UFUNCTION(BlueprintCallable)
+	void GameOver();
 	UFUNCTION(BlueprintCallable)
 	void ModifyScore(int PointAmount);
 	
 protected:
-	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
-	virtual void InitGameState() override;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wave")
+	TObjectPtr<UDataTable> WaveDataTable;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wave")
+	int CurrentWaveIndex;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wave")
+	FName NextWaveMap;
+	int WaveCount;
+	
+	void InitDataFromGameInstance();
 	virtual void BeginPlay() override;
 
 	virtual void OnLevelTimerUp();
@@ -32,11 +41,22 @@ protected:
 	/** 남은 시간을 반환한다.*/
 	UFUNCTION(BlueprintPure)
 	float GetRemainTime() const;
+	
 private:
 	FTimerHandle LevelTimerHandle;
 	FTimerHandle UpdateTimerHandle;
 	
-	UPROPERTY(EditAnywhere)
-	float LevelDuration;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true))
+	float LevelTimeLimit;
+	UPROPERTY(EditInstanceOnly, meta=(AllowPrivateAccess=true))
 	float TimerUpdateInterval;
+	
+protected:
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Level")
+	int SpawnItemCount;
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Level")
+	int SpawnEnemyCount;
+	
+	void InitLevel();
+
 };

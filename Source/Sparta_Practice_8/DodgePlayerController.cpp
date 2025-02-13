@@ -23,7 +23,7 @@ void ADodgePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	InitUI();
+	CreateHud();
 }
 
 void ADodgePlayerController::SetupInputComponent()
@@ -88,7 +88,7 @@ void ADodgePlayerController::OnClickCanceled()
 	UE_LOG(LogTemp, Display, TEXT("OnClickCanceled"));
 }
 
-void ADodgePlayerController::InitUI()
+void ADodgePlayerController::CreateHud()
 {
 	if (HudWidgetClass)
 	{

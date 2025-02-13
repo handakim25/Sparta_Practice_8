@@ -54,7 +54,7 @@ private:
 	float FollowTime;
 
 protected:
-	virtual void InitUI();
+	virtual void CreateHud();
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (AllowPrivateAccess = "true"))
 	TSubclassOf<class UHudWidget> HudWidgetClass;
