@@ -43,6 +43,14 @@ void ADodgeGameModeBase::EndLevel(bool bIsGameWin)
 	// Move to next level
 }
 
+void ADodgeGameModeBase::ModifyScore(int PointAmount)
+{
+	if (ADodgeGameState* DodgeGameState = Cast<ADodgeGameState>(GameState))
+	{
+		DodgeGameState->ModifyScore(PointAmount);
+	}
+}
+
 void ADodgeGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);

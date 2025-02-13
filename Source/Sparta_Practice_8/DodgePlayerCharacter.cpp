@@ -37,6 +37,8 @@ ADodgePlayerCharacter::ADodgePlayerCharacter()
 	TopDownCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("TopDownCamera"));
 	TopDownCamera->SetupAttachment(SpringArm, USpringArmComponent::SocketName);
 	TopDownCamera->bUsePawnControlRotation = false;
+
+	Tags.Add(FName("Player"));
 }
 
 // Called every frame

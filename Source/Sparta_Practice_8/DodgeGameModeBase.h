@@ -17,6 +17,7 @@ public:
 	ADodgeGameModeBase();
 
 	void EndLevel(bool bIsGameWin);
+	void ModifyScore(int PointAmount);
 	
 protected:
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
