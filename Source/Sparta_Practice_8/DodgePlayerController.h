@@ -53,11 +53,19 @@ private:
 	UPROPERTY(VisibleInstanceOnly, Category = "Input")
 	float FollowTime;
 
-protected:
-	virtual void CreateHud();
+public:
+	void ShowHud();
+	void ShowMainMenu(bool bIsRestart);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI", meta = (AllowPrivateAccess = "true"))
+protected:
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UHudWidget> HudWidgetClass;
 	UPROPERTY()
 	TObjectPtr<class UHudWidget> HudWidget;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="UI")
+	TSubclassOf<class UUserWidget> MainWidgetClass;
+	UPROPERTY()
+	TObjectPtr<class UUserWidget> MainWidget;
 };

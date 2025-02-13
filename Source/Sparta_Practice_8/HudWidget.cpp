@@ -4,6 +4,10 @@
 #include "HudWidget.h"
 
 #include "DodgeGameState.h"
+#include "DodgePlayerCharacter.h"
+#include "DodgePlayerController.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
+#include "Blueprint/WidgetTree.h"
 #include "Components/TextBlock.h"
 
 void UHudWidget::NativeConstruct()
@@ -17,6 +21,18 @@ void UHudWidget::NativeConstruct()
 
 		UpdateScoreDisplay(GameState->GetScore());
 		GameState->OnScoreChangedDelegate.AddDynamic(this, &UHudWidget::UpdateScoreDisplay);
+	}
+
+	if (ADodgePlayerController* PC = GetOwningPlayer<ADodgePlayerController>())
+	{
+		if (ACharacter* Character = PC->GetCharacter())
+		{
+			if (ADodgePlayerCharacter* DodgePlayerCharacter = Cast<ADodgePlayerCharacter>(Character))
+			{
+				UpdateLifeDisplay(DodgePlayerCharacter->GetLife());
+				DodgePlayerCharacter->OnLifeChangedDelegate.AddDynamic(this, &UHudWidget::UpdateLifeDisplay);
+			}
+		}
 	}
 }
 
@@ -39,3 +55,29 @@ void UHudWidget::UpdateScoreDisplay(int32 ScoreAmount)
 	ScoreText->SetText(FText::FromString(ScoreString));
 }
 
+void UHudWidget::UpdateLifeDisplay(int Life)
+{
+	// 현재는 이미지가 5개이므로 5개 이하로만 작동한다.
+	Life = Life <= 5 ? Life : 5;
+	
+	TArray<UWidget*> Children;
+	WidgetTree->GetChildWidgets(LifeContainer, Children);
+	if (Children.Num() < 5)
+	{
+		return;
+	}
+
+	int ActivateWidget = 0;
+	for (UWidget* Widget : Children)
+	{
+		if (ActivateWidget < Life)
+		{
+			Widget->SetVisibility(ESlateVisibility::Visible);
+			ActivateWidget++;
+		}
+		else
+		{
+			Widget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+}

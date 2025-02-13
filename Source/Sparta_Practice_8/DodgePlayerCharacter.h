@@ -7,6 +7,8 @@
 #include "GameFramework/Character.h"
 #include "DodgePlayerCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLifeChanged, int32, Life);
+
 UCLASS()
 class SPARTA_PRACTICE_8_API ADodgePlayerCharacter : public ACharacter
 {
@@ -22,6 +24,13 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	FOnLifeChanged OnLifeChangedDelegate;
+	UFUNCTION(BlueprintPure)
+	int GetLife() const;
+
+	UFUNCTION(BlueprintCallable)
+	void ModifyLife(int LifeAmount);
+	
 protected:
 	virtual void BeginPlay() override;
 	
@@ -38,9 +47,4 @@ private:
 	
 };
 
-inline void ADodgePlayerCharacter::BeginPlay()
-{
-	Super::BeginPlay();
 
-	Life = MaxLife;
-}

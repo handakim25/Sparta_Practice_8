@@ -62,14 +62,15 @@ void ADodgeGameModeBase::NextLevel()
 	{
 		// Game Clear
 		UE_LOG(LogTemp, Display, TEXT("Clear Game"));
-		GameOver();
+		GameOver(true);
 		return;
 	}
 
 	UGameplayStatics::OpenLevel(GetWorld(), NextWaveMap);
 }
 
-void ADodgeGameModeBase::GameOver()
+// 클리어 시에 true
+void ADodgeGameModeBase::GameOver(bool bIsClearGame)
 {
 	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
 	GetWorldTimerManager().ClearTimer(UpdateTimerHandle);
@@ -78,6 +79,7 @@ void ADodgeGameModeBase::GameOver()
 	{
 		PlayerController->SetPause(true);
 		PlayerController->StopMovement();
+		PlayerController->ShowMainMenu(bIsClearGame);
 	}
 }
 
@@ -169,7 +171,7 @@ void ADodgeGameModeBase::BeginPlay()
 
 void ADodgeGameModeBase::OnLevelTimerUp()
 {
-	GameOver();
+	GameOver(false);
 }
 
 void ADodgeGameModeBase::OnUpdateTimer()

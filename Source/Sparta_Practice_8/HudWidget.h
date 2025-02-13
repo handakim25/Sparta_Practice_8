@@ -20,6 +20,8 @@ public:
 	void UpdateTimerDisplay(float Time);
 	UFUNCTION()
 	void UpdateScoreDisplay(int32 ScoreAmount);
+	UFUNCTION()
+	void UpdateLifeDisplay(int Life);
 	
 protected:
 
@@ -28,4 +30,8 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<class UTextBlock> ScoreText;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UWidget> LifeContainer;
 };
+

@@ -57,3 +57,28 @@ void ADodgePlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInp
 
 }
 
+int ADodgePlayerCharacter::GetLife() const
+{
+	return Life;
+}
+
+void ADodgePlayerCharacter::ModifyLife(int LifeAmount)
+{
+	Life += LifeAmount;
+	Life = FMath::Clamp(Life, 0, MaxLife);
+
+	OnLifeChangedDelegate.Broadcast(Life);
+	
+	if (Life <= 0)
+	{
+		// Death
+	}
+}
+
+void ADodgePlayerCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Life = MaxLife;
+	OnLifeChangedDelegate.Broadcast(Life);
+}

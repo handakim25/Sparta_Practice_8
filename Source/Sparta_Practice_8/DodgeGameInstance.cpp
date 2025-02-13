@@ -3,3 +3,9 @@
 
 #include "DodgeGameInstance.h"
 
+void UDodgeGameInstance::ResetGame()
+{
+	TotalScore = 0;
+	TotalPlayTime = 0;
+	CurrentWaveIndex = 0;
+}

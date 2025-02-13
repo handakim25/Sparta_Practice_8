@@ -19,7 +19,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void NextLevel();
 	UFUNCTION(BlueprintCallable)
-	void GameOver();
+	void GameOver(bool bIsClearGame);
 	UFUNCTION(BlueprintCallable)
 	void ModifyScore(int PointAmount);
 	

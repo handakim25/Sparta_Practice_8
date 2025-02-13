@@ -8,6 +8,7 @@
 #include "HudWidget.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 
 ADodgePlayerController::ADodgePlayerController()
 {
@@ -23,7 +24,7 @@ void ADodgePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CreateHud();
+	ShowHud();
 }
 
 void ADodgePlayerController::SetupInputComponent()
@@ -88,14 +89,64 @@ void ADodgePlayerController::OnClickCanceled()
 	UE_LOG(LogTemp, Display, TEXT("OnClickCanceled"));
 }
 
-void ADodgePlayerController::CreateHud()
+void ADodgePlayerController::ShowHud()
 {
+	if (HudWidget)
+	{
+		HudWidget->RemoveFromParent();
+		HudWidget = nullptr;
+	}
+
+	if (MainWidget)
+	{
+		MainWidget->RemoveFromParent();
+		MainWidget = nullptr;
+	}
+
 	if (HudWidgetClass)
 	{
 		HudWidget = CreateWidget<UHudWidget>(this, HudWidgetClass);
 		if (HudWidget)
 		{
 			HudWidget->AddToViewport();
+		}
+	}
+}
+
+// 클리어 시에 true
+void ADodgePlayerController::ShowMainMenu(bool bIsRestart)
+{
+	if (HudWidget)
+	{
+		HudWidget->RemoveFromParent();
+		HudWidget = nullptr;
+	}
+
+	if (MainWidget)
+	{
+		MainWidget->RemoveFromParent();
+		MainWidget = nullptr;
+	}
+
+	if (MainWidgetClass)
+	{
+		MainWidget = CreateWidget<UUserWidget>(this, MainWidgetClass);
+		if (MainWidget)
+		{
+			MainWidget->AddToViewport();
+
+			if (UTextBlock* ButtonText = Cast<UTextBlock>(MainWidget->GetWidgetFromName(TEXT("RestartButtonText"))))
+			{
+				if (bIsRestart)
+				{
+					ButtonText->SetText(FText::FromString(TEXT("Restart")));
+                
+				}
+				else
+				{
+					ButtonText->SetText(FText::FromString(TEXT("Start")));
+				}
+			}
 		}
 	}
 }
