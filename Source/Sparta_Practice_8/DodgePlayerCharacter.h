@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EngineUtils.h"
 #include "NiagaraCommon.h"
 #include "GameFramework/Character.h"
 #include "DodgePlayerCharacter.generated.h"
@@ -37,6 +38,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int MaxLife;
 	int Life;
+
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))

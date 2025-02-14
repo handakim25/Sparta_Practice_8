@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AIController.h"
 #include "GameFramework/Character.h"
 #include "EnemyController.generated.h"
 
 UCLASS()
-class SPARTA_PRACTICE_8_API AEnemyController : public ACharacter
+class SPARTA_PRACTICE_8_API AEnemyController : public AAIController
 {
 	GENERATED_BODY()
 
@@ -19,11 +20,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
+private:
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<UBlackboardData> BlackboardData;
 };

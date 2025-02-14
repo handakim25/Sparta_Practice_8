@@ -72,6 +72,7 @@ void ADodgePlayerCharacter::ModifyLife(int LifeAmount)
 	if (Life <= 0)
 	{
 		// Death
+		
 	}
 }
 
@@ -81,4 +82,15 @@ void ADodgePlayerCharacter::BeginPlay()
 
 	Life = MaxLife;
 	OnLifeChangedDelegate.Broadcast(Life);
+}
+
+float ADodgePlayerCharacter::TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent,
+	class AController* EventInstigator, AActor* DamageCauser)
+{
+	float ActualDamage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	ModifyLife(ActualDamage * -1);
+
+	UE_LOG(LogTemp, Display, TEXT("Life: %d"), Life);
+	
+	return  ActualDamage;
 }

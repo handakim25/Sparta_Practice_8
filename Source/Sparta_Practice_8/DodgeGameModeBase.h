@@ -31,7 +31,7 @@ protected:
 
 	// Time
 	virtual void OnLevelTimerUp();
-	void OnUpdateTimer();
+	void OnUpdateTimer() const;
 
 	/** 남은 시간을 반환한다.*/
 	UFUNCTION(BlueprintPure)

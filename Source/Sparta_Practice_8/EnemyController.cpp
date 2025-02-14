@@ -3,6 +3,9 @@
 
 #include "EnemyController.h"
 
+#include "EnemyCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
+
 // Sets default values
 AEnemyController::AEnemyController()
 {
@@ -15,20 +18,17 @@ AEnemyController::AEnemyController()
 void AEnemyController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (UBlackboardComponent* BlackboardComponent = GetBlackboardComponent())
+	{
+		if (AEnemyCharacter* EnemyCharacter = GetPawn<AEnemyCharacter>())
+		{
+			BlackboardComponent->SetValueAsFloat(TEXT("WaitTime"), EnemyCharacter->GetWaitTime());
+		}
+	}
 	
+	if (BehaviorTree)
+	{
+		RunBehaviorTree(BehaviorTree);
+	}
 }
-
-// Called every frame
-void AEnemyController::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AEnemyController::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-

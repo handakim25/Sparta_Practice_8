@@ -6,7 +6,6 @@
 #include "DodgeGameInstance.h"
 #include "DodgeGameState.h"
 #include "DodgePlayerController.h"
-#include "SpawnVolume.h"
 #include "WaveSpawnVolume.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -114,7 +113,7 @@ void ADodgeGameModeBase::OnLevelTimerUp()
 	GameOver(false);
 }
 
-void ADodgeGameModeBase::OnUpdateTimer()
+void ADodgeGameModeBase::OnUpdateTimer() const
 {
 	if (ADodgeGameState* DodgeGameState = GetGameState<ADodgeGameState>())
 	{
