@@ -8,6 +8,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnScoreChanged, int32, Score);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnTimeChanged, float, RemainTime);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWaveStarted, int32, WaveIndex);
 
 /**
  * 
@@ -41,10 +42,21 @@ public:
 	
 	UFUNCTION(Blueprintpure, Category = "Time")
 	float GetRemainTime() const;
+
+	FOnWaveStarted OnWaveStartedDelegate;
+	
+	UFUNCTION(BlueprintCallable, Category = "Wave")
+	void SetWaveIndex(int NewWaveIndex);
+	
+	UFUNCTION(BlueprintPure, Category = "Wave")
+	int GetWaveIndex() const;
 	
 private:
-	UPROPERTY(VisibleInstanceOnly, Transient, Category = "Score")
+	UPROPERTY(VisibleInstanceOnly, Transient)
 	int32 Score;
-	UPROPERTY(VisibleInstanceOnly, Transient, Category = "Time")
+	UPROPERTY(VisibleInstanceOnly, Transient)
 	float RemainTime;
+	/** 웨이브 인덱스, 0부터 시작한다. */
+	UPROPERTY(VisibleInstanceOnly, Transient)
+	int WaveIndex;
 };

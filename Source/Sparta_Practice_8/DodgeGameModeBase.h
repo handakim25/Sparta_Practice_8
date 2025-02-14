@@ -15,26 +15,21 @@ class SPARTA_PRACTICE_8_API ADodgeGameModeBase : public AGameModeBase
 	GENERATED_BODY()
 public:
 	ADodgeGameModeBase();
-	
+
+	// Win / Lose
 	UFUNCTION(BlueprintCallable)
 	void NextLevel();
 	UFUNCTION(BlueprintCallable)
 	void GameOver(bool bIsClearGame);
+
+	// Score
 	UFUNCTION(BlueprintCallable)
 	void ModifyScore(int PointAmount);
 	
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Wave")
-	TObjectPtr<UDataTable> WaveDataTable;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wave")
-	int CurrentWaveIndex;
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Wave")
-	FName NextWaveMap;
-	int WaveCount;
-	
-	void InitDataFromGameInstance();
 	virtual void BeginPlay() override;
 
+	// Time
 	virtual void OnLevelTimerUp();
 	void OnUpdateTimer();
 
@@ -46,17 +41,16 @@ private:
 	FTimerHandle LevelTimerHandle;
 	FTimerHandle UpdateTimerHandle;
 	
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, meta=(AllowPrivateAccess=true))
-	float LevelTimeLimit;
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Transient, meta=(AllowPrivateAccess=true))
+	float WaveTimeLimit;
 	UPROPERTY(EditInstanceOnly, meta=(AllowPrivateAccess=true))
 	float TimerUpdateInterval;
-	
+
 protected:
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Level")
-	int SpawnItemCount;
-	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, Category="Level")
-	int SpawnEnemyCount;
-	
-	void InitLevel();
+	// Level
+	UPROPERTY(Transient)
+	class AWaveSpawnVolume* WaveSpawnVolume;
+
+	virtual void StartWave(int32 WaveIndex);
 
 };

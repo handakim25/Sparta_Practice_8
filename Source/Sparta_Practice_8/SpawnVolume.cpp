@@ -3,7 +3,7 @@
 
 #include "SpawnVolume.h"
 
-#include "ActorSpawnRow.h"
+#include "ItemSpawnData.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -20,30 +20,6 @@ ASpawnVolume::ASpawnVolume()
 	SpawningBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	
 	SpawnHeightOffset = 64.f;
-}
-
-AActor* ASpawnVolume::SpawnRandomActorInVolume()
-{
-	if (FActorSpawnRow* SelectedRow = GetRandomSpawnRow())
-	{
-		if (UClass* ActualClass = SelectedRow->ActorClass.Get())
-		{
-			return SpawnActorRandomLocationInVolume(ActualClass);
-		}
-	}
-
-	return nullptr;
-}
-
-void ASpawnVolume::SpawnFixedActorsInVolume()
-{
-}
-
-// Called when the game starts or when spawned
-void ASpawnVolume::BeginPlay()
-{
-	Super::BeginPlay();
-
 }
 
 FVector ASpawnVolume::GetRandomPointInVolume() const
@@ -76,54 +52,13 @@ FVector ASpawnVolume::GetRandomPointInVolume() const
 	return BoxOrigin;
 }
 
-AActor* ASpawnVolume::SpawnActorRandomLocationInVolume(TSubclassOf<AActor> SpawnActorClass)
+AActor* ASpawnVolume::SpawnActorRandomLocationInVolume(UClass* SpawnActorClass) const
 {
 	if (!SpawnActorClass) return nullptr;
-
+	
 	return GetWorld()->SpawnActor<AActor>(
 		SpawnActorClass,
 		GetRandomPointInVolume(),
 		FRotator::ZeroRotator
 	);
 }
-
-FActorSpawnRow* ASpawnVolume::GetRandomSpawnRow() const
-{
-	if (!SpawnDataTable) return nullptr;
-
-	TArray<FActorSpawnRow*> AllRows;
-	static const FString ContextString(TEXT("ItemSpawnContext"));
-	SpawnDataTable->GetAllRows(ContextString, AllRows);
-
-	if (AllRows.IsEmpty()) return  nullptr;
-
-	float TotalChance = 0.f;
-	for (const FActorSpawnRow* Row : AllRows)
-	{
-		if (Row)
-		{
-			TotalChance += Row->SpawnChance;
-		}
-	}
-
-	const float RandValue = FMath::FRandRange(0.f, TotalChance);
-	float AccumulateChance = 0.f;
-	for (FActorSpawnRow* Row : AllRows)
-	{
-		AccumulateChance += Row->SpawnChance;
-		if (RandValue < AccumulateChance)
-		{
-			return Row;
-		}
-	}
-
-	return nullptr;
-}
-
-// Called every frame
-void ASpawnVolume::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-

@@ -40,3 +40,15 @@ float ADodgeGameState::GetRemainTime() const
 {
 	return RemainTime;
 }
+
+void ADodgeGameState::SetWaveIndex(int NewWaveIndex)
+{
+	WaveIndex = NewWaveIndex;
+
+	OnWaveStartedDelegate.Broadcast(NewWaveIndex);
+}
+
+int ADodgeGameState::GetWaveIndex() const
+{
+	return WaveIndex;
+}

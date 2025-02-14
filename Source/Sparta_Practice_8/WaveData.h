@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "WaveRow.generated.h"
+#include "WaveData.generated.h"
 
 USTRUCT(BlueprintType)
-struct SPARTA_PRACTICE_8_API FWaveRow : public FTableRowBase
+struct SPARTA_PRACTICE_8_API FWaveData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName MapName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int TimeLimit;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int ItemSpawnCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int EnemySpawnCount;
+
+	float TotalChance;
 };

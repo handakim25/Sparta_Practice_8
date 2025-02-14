@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ActorSpawnRow.generated.h"
+#include "ItemSpawnData.generated.h"
 
 USTRUCT(BlueprintType)
-struct SPARTA_PRACTICE_8_API FActorSpawnRow : public FTableRowBase
+struct SPARTA_PRACTICE_8_API FItemSpawnData : public FTableRowBase
 {
 	GENERATED_BODY()
 
@@ -14,8 +14,6 @@ struct SPARTA_PRACTICE_8_API FActorSpawnRow : public FTableRowBase
 	FName ActorName;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<AActor> ActorClass;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int SpawnCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SpawnChance;
 };

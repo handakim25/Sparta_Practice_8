@@ -7,7 +7,7 @@
 #include "DodgeGameState.h"
 #include "DodgePlayerController.h"
 #include "SpawnVolume.h"
-#include "WaveRow.h"
+#include "WaveSpawnVolume.h"
 #include "Kismet/GameplayStatics.h"
 
 ADodgeGameModeBase::ADodgeGameModeBase()
@@ -32,33 +32,33 @@ ADodgeGameModeBase::ADodgeGameModeBase()
 		PlayerControllerClass = PlayerControllerBPClass.Class;
 	}
 
-	NextWaveMap = "";
-	CurrentWaveIndex = 0;
-	WaveCount = 0;
-	LevelTimeLimit = 5.f;
+	WaveTimeLimit = 5.f;
 	TimerUpdateInterval = 0.1f;
-	SpawnItemCount = 0;
-	SpawnEnemyCount = 0;
+	WaveSpawnVolume = nullptr;
 }
 
 void ADodgeGameModeBase::NextLevel()
 {
-	const float RemainTime = GetRemainTime();
-	
-	UE_LOG(LogTemp, Display, TEXT("DodgeGameModeBase::NextLevel"));
-
-	CurrentWaveIndex++;
-	if (UDodgeGameInstance* GameInstance = GetGameInstance<UDodgeGameInstance>())
+	ADodgeGameState* DodgeGameState = GetGameState<ADodgeGameState>();
+	if (!DodgeGameState)
 	{
-		if (ADodgeGameState* DodgeGameState = GetGameState<ADodgeGameState>())
-		{
-			GameInstance->TotalScore += DodgeGameState->GetScore();
-			GameInstance->TotalPlayTime += RemainTime;
-			GameInstance->CurrentWaveIndex = CurrentWaveIndex;
-		}
+		UE_LOG(LogTemp, Error, TEXT("Failed to get game state"));
+		return;
 	}
+	
+	const float RemainTime = GetRemainTime();
+	UDodgeGameInstance* GameInstance = GetGameInstance<UDodgeGameInstance>();
+	if (!GameInstance)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Failed to get game instance"));
+		return;
+	}
+	GameInstance->TotalScore += DodgeGameState->GetScore();
+	GameInstance->TotalPlayTime += RemainTime;
 
-	if (CurrentWaveIndex >= WaveCount)
+	int NextWaveIndex = DodgeGameState->GetWaveIndex() + 1;
+	int WaveCount = WaveSpawnVolume->GetWaveCount();
+	if (NextWaveIndex >= WaveCount)
 	{
 		// Game Clear
 		UE_LOG(LogTemp, Display, TEXT("Clear Game"));
@@ -66,10 +66,11 @@ void ADodgeGameModeBase::NextLevel()
 		return;
 	}
 
-	UGameplayStatics::OpenLevel(GetWorld(), NextWaveMap);
+	// Start Level
+	StartWave(NextWaveIndex);
 }
 
-// 클리어 시에 true
+// 클리어 시에 true, 실패 시에 false
 void ADodgeGameModeBase::GameOver(bool bIsClearGame)
 {
 	GetWorldTimerManager().ClearTimer(LevelTimerHandle);
@@ -91,82 +92,21 @@ void ADodgeGameModeBase::ModifyScore(int PointAmount)
 	}
 }
 
-void ADodgeGameModeBase::InitDataFromGameInstance()
-{
-	UDodgeGameInstance* GameInstance = GetGameInstance<UDodgeGameInstance>();
-	if (!GameInstance)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to access GameInstance, Check Game Instance setting"));
-		return;
-	}
-	
-	if (auto DodgeGameState = GetGameState<ADodgeGameState>())
-	{
-		DodgeGameState->SetScore(GameInstance->TotalScore);
-	}
-	
-	CurrentWaveIndex = GameInstance->CurrentWaveIndex;
-	if (!WaveDataTable)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Empty Wave Data."));
-		return;
-	}
-
-	TArray<FWaveRow*> AllRows;
-	static const FString ContextString(TEXT("WaveContext"));
-	WaveDataTable->GetAllRows(ContextString, AllRows);
-	if (AllRows.IsEmpty())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to load wave data"));
-		return;
-	}
-
-	WaveCount = AllRows.Num();
-	
-	if (CurrentWaveIndex + 1 < AllRows.Num())
-	{
-		FWaveRow* NextWaveRow = AllRows[CurrentWaveIndex + 1];
-		NextWaveMap = NextWaveRow->MapName;
-	}
-	
-	if (CurrentWaveIndex < AllRows.Num())
-	{
-		FWaveRow* WaveRow = AllRows[CurrentWaveIndex];
-		LevelTimeLimit = WaveRow->TimeLimit;
-		SpawnItemCount = WaveRow->ItemSpawnCount;
-		SpawnEnemyCount = WaveRow->EnemySpawnCount;
-	}
-}
-
 void ADodgeGameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// Get Data from Game Instance
-	InitDataFromGameInstance();
+	// Cache SpawnVolume
+	TArray<AActor*> FoundVolumes;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AWaveSpawnVolume::StaticClass(), FoundVolumes);
+	if (FoundVolumes.Num() <= 0)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Failed to find spawn volume."));
+		return;
+	}
+	WaveSpawnVolume = Cast<AWaveSpawnVolume>(FoundVolumes[0]);
 	
-	// Timer
-	GetWorldTimerManager().SetTimer(
-		LevelTimerHandle,
-		this,
-		&ADodgeGameModeBase::OnLevelTimerUp,
-		LevelTimeLimit,
-		false
-	);
-
-	TimerUpdateInterval = FMath::Max(TimerUpdateInterval, 0.1f);
-	GetWorldTimerManager().SetTimer(
-		UpdateTimerHandle,
-		this,
-		&ADodgeGameModeBase::OnUpdateTimer,
-		TimerUpdateInterval,
-		true
-	);
-
-	// Get Data from Game Instance
-	
-	// 레벨을 Setup
-	InitLevel();
+	StartWave(0);
 }
 
 void ADodgeGameModeBase::OnLevelTimerUp()
@@ -188,23 +128,42 @@ float ADodgeGameModeBase::GetRemainTime() const
 		GetWorldTimerManager().GetTimerRemaining(LevelTimerHandle) : 0.0f;
 }
 
-void ADodgeGameModeBase::InitLevel()
+void ADodgeGameModeBase::StartWave(int32 WaveIndex)
 {
-	TArray<AActor*> FoundVolumes;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASpawnVolume::StaticClass(), FoundVolumes);
-	if (FoundVolumes.Num() <= 0)
+	if (ADodgeGameState* DodgeGameState = GetGameState<ADodgeGameState>())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to find spawn volume."));
-		return;
+		DodgeGameState->SetWaveIndex(WaveIndex);
 	}
-	ASpawnVolume* SpawnVolume = Cast<ASpawnVolume>(FoundVolumes[0]);
-	if (!SpawnVolume)
+	WaveTimeLimit = WaveSpawnVolume->GetWaveTimeLimit(WaveIndex);
+	
+	// 레벨 초기화
+	WaveSpawnVolume->DestroyAllSpawnedActors();
+	WaveSpawnVolume->SpawnWaves(WaveIndex);
+	
+	APlayerController* PlayerController = GetWorld()->GetFirstPlayerController();
+	AActor* PlayerStart = FindPlayerStart(PlayerController);
+	if (PlayerController && PlayerStart)
 	{
-		return;
+		PlayerController->GetPawn()->TeleportTo(PlayerStart->GetActorLocation(), PlayerStart->GetActorRotation());
 	}
+	
+	// 타이머 리셋
+	GetWorldTimerManager().SetTimer(
+		LevelTimerHandle,
+		this,
+		&ADodgeGameModeBase::OnLevelTimerUp,
+		WaveTimeLimit,
+		false
+	);
 
-	for (int i = 0; i < SpawnItemCount; i++)
-	{
-		SpawnVolume->SpawnRandomActorInVolume();
-	}
+	TimerUpdateInterval = FMath::Max(TimerUpdateInterval, 0.1f);
+	GetWorldTimerManager().SetTimer(
+		UpdateTimerHandle,
+		this,
+		&ADodgeGameModeBase::OnUpdateTimer,
+		TimerUpdateInterval,
+		true
+	);
+	// 초기값 전파
+	OnUpdateTimer();
 }

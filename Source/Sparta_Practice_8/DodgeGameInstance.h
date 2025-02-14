@@ -19,8 +19,6 @@ public:
 	int32 TotalScore;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="GameData")
 	float TotalPlayTime;
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="GameData")
-	int CurrentWaveIndex;
 
 	UFUNCTION(BlueprintCallable)
 	void ResetGame();

@@ -6,7 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "SpawnVolume.generated.h"
 
-struct FActorSpawnRow;
+struct FItemSpawnData;
 
 UCLASS()
 class SPARTA_PRACTICE_8_API ASpawnVolume : public AActor
@@ -17,13 +17,11 @@ public:
 	// Sets default values for this actor's properties
 	ASpawnVolume();
 
-	UFUNCTION(BlueprintCallable)
-	AActor* SpawnRandomActorInVolume();
-	UFUNCTION(BlueprintCallable)
-	void SpawnFixedActorsInVolume();
-	
 	UFUNCTION(BlueprintPure, Category = "Spawning")
 	FVector GetRandomPointInVolume() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Spawning")
+	AActor* SpawnActorRandomLocationInVolume(UClass* SpawnActorClass) const;
 	
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
@@ -34,17 +32,4 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	int RandomSpawnTryCount = 3;
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Spawning")
-	TObjectPtr<UDataTable> SpawnDataTable;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-	
-	UFUNCTION(BlueprintCallable, Category = "Spawning")
-	AActor* SpawnActorRandomLocationInVolume(TSubclassOf<AActor> SpawnActorClass);
-	FActorSpawnRow* GetRandomSpawnRow() const;
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };
