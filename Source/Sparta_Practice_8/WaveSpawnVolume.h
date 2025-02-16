@@ -40,6 +40,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wave")
 	TArray<UDataTable*> SpawnDataTables;
 	TArray<TArray<FItemSpawnData*>> SpawnData;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Wave")
+	TSubclassOf<class AEnemyCharacter> EnemyClass;
 	
 	UPROPERTY(Transient)
 	TArray<AActor*> SpawnedActors;

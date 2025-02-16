@@ -3,6 +3,7 @@
 
 #include "DodgePlayerCharacter.h"
 
+#include "DodgeGameModeBase.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -71,8 +72,11 @@ void ADodgePlayerCharacter::ModifyLife(int LifeAmount)
 	
 	if (Life <= 0)
 	{
-		// Death
-		
+		// Death, 단순하게 GameOver를 호출. 체력 관리에 추가적인 기능이 있다면 HandlePlayerDeath 등으로 변경
+		if (ADodgeGameModeBase* DodgeGameMode = GetWorld()->GetAuthGameMode<ADodgeGameModeBase>())
+		{
+			DodgeGameMode->GameOver(false);
+		}
 	}
 }
 

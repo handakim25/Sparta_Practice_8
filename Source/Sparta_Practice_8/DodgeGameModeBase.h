@@ -25,7 +25,7 @@ public:
 	// Score
 	UFUNCTION(BlueprintCallable)
 	void ModifyScore(int PointAmount);
-	
+
 protected:
 	virtual void BeginPlay() override;
 

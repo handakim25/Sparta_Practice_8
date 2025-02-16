@@ -22,7 +22,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Spawning")
 	AActor* SpawnActorRandomLocationInVolume(UClass* SpawnActorClass) const;
-	
+
 private:
 	UPROPERTY(VisibleAnywhere, BlueprintreadOnly, Category = "Spawning", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UBoxComponent> SpawningBox;

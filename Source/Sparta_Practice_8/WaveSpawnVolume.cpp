@@ -3,6 +3,7 @@
 
 #include "WaveSpawnVolume.h"
 
+#include "EnemyCharacter.h"
 #include "ItemSpawnData.h"
 #include "WaveData.h"
 
@@ -55,6 +56,18 @@ void AWaveSpawnVolume::SpawnWaves(int32 WaveIndex)
 		if (UClass* ActorClass = GetRandomItemClass(WaveIndex))
 		{
 			if (AActor* SpawnedActor = SpawnActorRandomLocationInVolume(ActorClass))
+			{
+				SpawnedActors.Add(SpawnedActor);
+			}
+		}
+	}
+
+	int EnemySpawnCount = WaveData[WaveIndex]->EnemySpawnCount;
+	for (int i= 0; i < EnemySpawnCount; ++i)
+	{
+		if (EnemyClass)
+		{
+			if (AActor* SpawnedActor = SpawnActorRandomLocationInVolume(EnemyClass))
 			{
 				SpawnedActors.Add(SpawnedActor);
 			}
